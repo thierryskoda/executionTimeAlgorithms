@@ -13,8 +13,9 @@ You can pass arguments to the command to specify some options
 
 ```
 npm start AGLO_TYPE SEUIL TAILLE
-##Defaults
 ```
+##Defaults
+``
 ALGO_TYPE = 'merge';
 SEUIL = 0;
 TAILLE = [1000, 5000, 10000, 50000, 100000];
