@@ -1,6 +1,6 @@
-var MergeSort = require('./merge.sort');
-var InsertionSort = require('./insertion.sort');
-var BucketSort = require('./bucket.sort');
+var MergeSort = require('./algo/merge.sort');
+var InsertionSort = require('./algo/insertion.sort');
+var BucketSort = require('./algo/bucket.sort');
 var fs = require('fs');
 var json2csv = require('json2csv');
 
@@ -8,6 +8,7 @@ const NUMBER_OF_EXAMPLAIRE = 30;
 const TAILLE = [1000, 5000, 10000, 50000, 100000];
 const fields = ['taille', 's1', 's2', 's3'];
 const MAX_SEUIL = 100;
+const seuil = 0;
 
 // Utiliy function to help ! :)
 function getArrayOfNumbers(array) {
@@ -23,18 +24,10 @@ function exportToCsv(fileName, data, fields) {
     fields: fields
   });
 
-  fs.writeFile(fileName, result, function(err) {
+  fs.writeFile('results/' + fileName, result, function(err) {
     if (err) throw err;
     console.log('file saved');
   });
-}
-
-// Find best seuil
-var bestSeuil = 9999;
-function isBestSeuil(seuil) {
-  if(seuil < bestSeuil) {
-    bestSeuil = seuil;
-  }
 }
 
 /**
@@ -60,7 +53,7 @@ function getExecutionTime(arrayToSort, type, seuil) {
 /**
  * Variiables to be modified for different experiment
  */
-const arrayType = 'merge';
+const arrayType = (process.argv.length > 2) ? process.argv[2] : 'merge';
 
 // Loop du seuil
 // for (var k = 0; k < MAX_SEUIL; k++) {
@@ -78,12 +71,10 @@ const arrayType = 'merge';
       // Get the array from the file
       var array = fs.readFileSync("./donnees/testset_1000_" + i + ".txt").toString().split("\n");
 
-      totalTempsExamplaire += getExecutionTime(array, arrayType);
+      totalTempsExamplaire += getExecutionTime(array, arrayType, seuil);
 
       // Calcule de la totalTempsExamplaire pour la série
       switch(i) {
-        case 0:
-          break;
         case 9:
           s1 = totalTempsExamplaire / 10;
           totalTempsExamplaire = 0;
@@ -101,7 +92,7 @@ const arrayType = 'merge';
             s2: s2,
             s3: s3
           }];
-          exportToCsv("CSV_" + arrayType + "_" + TAILLE[j], data, fields);
+          exportToCsv("CSV_" + arrayType + "_taille_" + TAILLE[j] + "_seuil_" + seuil, data, fields);
 
           s1=0;
           s2=0;
