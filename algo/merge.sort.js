@@ -1,4 +1,5 @@
 var InsertionSort = require('./insertion.sort');
+exports.seuil = 0;
 
 /**
  * Sorts the array by breaking it down
@@ -6,31 +7,29 @@ var InsertionSort = require('./insertion.sort');
  *
  * @param {Array} array The array to sort
  */
-exports.sort = function(array, seuil) {
-  return sort(array, seuil);
+exports.sort = function(array) {
+  return sort(array);
 }
 
-function sort(array, seuil) {
-  if(!seuil) seuil = 0;
-
+function sort(array) {
   var length = array.length,
-      mid    = Math.floor(length * 0.5),
-      left   = array.slice(0, mid),
-      right  = array.slice(mid, length);
+  mid    = Math.floor(length * 0.5),
+  left   = array.slice(0, mid),
+  right  = array.slice(mid, length);
 
   if(length === 1) {
     return array;
   }
 
-  // If size of array is smaller and the 'seuil' we gave in input, lets use insertion sort instead
-  if(left.length < seuil) {
+  // If size of array is smaller and the 'exports.seuil' we gave in input, lets use insertion sort instead
+  if(left.length < exports.seuil) {
     return InsertionSort.sort(left);
   }
-  if(right.length < seuil) {
+  if(right.length < exports.seuil) {
     return InsertionSort.sort(right);
   }
 
-  return merge(sort(left, seuil), sort(right, seuil));
+  return merge(sort(left), sort(right));
 }
 
 
@@ -45,7 +44,7 @@ function sort(array, seuil) {
  * @param {Array} left The left hand sublist
  * @param {Array} right The right hand sublist
  */
-function merge(left, right) {
+ function merge(left, right) {
   var result = [];
   while(left.length || right.length) {
     if(left.length && right.length) {
@@ -69,32 +68,32 @@ function merge(left, right) {
  * [sortV2 description]
  * @param {[type]} array [description]
  */
-exports.sortV2 = function(array, seuil) {
+ exports.sortV2 = function(array, seuil) {
   return sortV2(array, seuil);
 }
 
 function sortV2(array, seuil) {
   if (array.length > 1) {
-      return mergeV2(sortV2(array.slice(0, Math.ceil(array.length/2))),
-          sortV2(array.slice(Math.ceil(array.length/2), array.length)), []);
+    return mergeV2(sortV2(array.slice(0, Math.ceil(array.length/2))),
+      sortV2(array.slice(Math.ceil(array.length/2), array.length)), []);
   } else {
-      return array;
+    return array;
   }
 };
 
 function mergeV2(left, right, array) {
-    if (left.length == 0 && right.length == 0) {
-        return array;
-    } else if (left.length == 0) {
-        return array.concat(right);
-    } else if (right.length == 0) {
-        return array.concat(left);
-    } else if (left[0] < right[0]) {
-        array.push(left.shift());
-    } else {
-        array.push(right.shift());
-    }
-    return mergeV2(left, right, array);
+  if (left.length == 0 && right.length == 0) {
+    return array;
+  } else if (left.length == 0) {
+    return array.concat(right);
+  } else if (right.length == 0) {
+    return array.concat(left);
+  } else if (left[0] < right[0]) {
+    array.push(left.shift());
+  } else {
+    array.push(right.shift());
+  }
+  return mergeV2(left, right, array);
 };
 
 
@@ -124,53 +123,55 @@ function mergeV2(left, right, array) {
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-exports.seuil = 0;
-
  exports.sortV3 = function(array) {
    return mergeSort(array);
  }
 
 /**
- * Merges two arrays in order based on their natural
- * relationship.
- * @param {Array} left The first array to merge.
- * @param {Array} right The second array to merge.
- * @return {Array} The merged array.
- */
+* Merges two arrays in order based on their natural
+* relationship.
+* @param {Array} left The first array to merge.
+* @param {Array} right The second array to merge.
+* @return {Array} The merged array.
+*/
 function mergeV3(left, right){
-    var result  = [],
-        il      = 0,
-        ir      = 0;
+  var result  = [],
+  il      = 0,
+  ir      = 0;
 
-    while (il < left.length && ir < right.length){
-        if (left[il] < right[ir]){
-            result.push(left[il++]);
-        } else {
-            result.push(right[ir++]);
-        }
+  while (il < left.length && ir < right.length){
+    if (left[il] < right[ir]){
+      result.push(left[il++]);
+    } else {
+      result.push(right[ir++]);
     }
+  }
 
-    return result.concat(left.slice(il)).concat(right.slice(ir));
+  return result.concat(left.slice(il)).concat(right.slice(ir));
 }
 
 /**
- * Sorts an array in ascending natural order using
- * merge sort.
- * @param {Array} items The array to sort.
- * @return {Array} The sorted array.
- */
-function mergeSort(items, seuil){
+* Sorts an array in ascending natural order using
+* merge sort.
+* @param {Array} items The array to sort.
+* @return {Array} The sorted array.
+*/
+function mergeSort(items){
 
-    if (items.length < 2) {
-        return items;
-    }
+  if (items.length < 2) {
+    return items;
+  }
 
-    var middle = Math.floor(items.length / 2),
-        left    = items.slice(0, middle),
-        right   = items.slice(middle);
+  // Use insertion sort if the array length is less than the seuil instead of always doing recursive
+  if(items.length < exports.seuil) {
+    return InsertionSort.sort(items);
+  }
 
-    return mergeV3(mergeSort(left), mergeSort(right));
+  var middle = Math.floor(items.length / 2),
+  left    = items.slice(0, middle),
+  right   = items.slice(middle);
+
+  return mergeV3(mergeSort(left), mergeSort(right));
 }
 
 

@@ -9,11 +9,11 @@ var json2csv = require('json2csv');
  /  Constants
  /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
 const NUMBER_OF_EXAMPLAIRE = 30;
-const TAILLE = [1000, 5000, 10000, 50000, 100000];
 const fields = ['taille', 's1', 's2', 's3'];
 const MAX_SEUIL = 100;
-const seuil = (process.argv.length > 3) ? process.argv[3] : 0;
 const arrayType = (process.argv.length > 2) ? process.argv[2] : 'merge';
+const seuil = (process.argv.length > 3) ? process.argv[3] : 0;
+const TAILLE = (process.argv.length > 4) ? [process.argv[4]] : [1000, 5000, 10000, 50000, 100000];
 
 
 /*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -69,7 +69,7 @@ for (var j = 0; j < TAILLE.length; j++) {
   // Loop sur nombre d'examplaire
   for (var i = 0; i < NUMBER_OF_EXAMPLAIRE; i++) {
     // Get the array from the file
-    var array = fs.readFileSync("./donnees/testset_1000_" + i + ".txt").toString().split("\n");
+    var array = fs.readFileSync("./donnees/testset_" + TAILLE[j] + "_" + i + ".txt").toString().split("\n");
 
     totalTempsExamplaire += getExecutionTime(array, arrayType, seuil);
 
