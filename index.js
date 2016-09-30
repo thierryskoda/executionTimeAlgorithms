@@ -95,7 +95,7 @@ for (var j = 0; j < TAILLE.length; j++) {
           s2: s2,
           s3: s3
         }];
-        exportToCsv("CSV_" + arrayType + "_taille_" + TAILLE[j] + "_seuil_" + seuil, data, fields);
+        exportToCsv("CSV_" + arrayType + "_taille_" + TAILLE[j] + "_seuil_" + seuil + ".csv", data, fields);
 
         s1=0;
         s2=0;
