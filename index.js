@@ -60,6 +60,9 @@ function getExecutionTime(arrayToSort, type, seuil) {
 /*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
  /  The program
  /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+
+var allData = [];
+
 for (var j = 0; j < TAILLE.length; j++) {
   var totalTempsExamplaire = 0;
   var s1 = 0;
@@ -89,13 +92,19 @@ for (var j = 0; j < TAILLE.length; j++) {
         s3 = totalTempsExamplaire / 10;
         console.log("Moyenne pour taille " + TAILLE[j] + " avec seuil de " + seuil + " pour la série 3 est: " + s3 + "ms")
         totalTempsExamplaire = 0;
-        var data = [{
+
+        var data = {
           taille: TAILLE[j],
           s1: s1,
           s2: s2,
           s3: s3
-        }];
-        exportToCsv("CSV_" + arrayType + "_taille_" + TAILLE[j] + "_seuil_" + seuil, data, fields);
+        };
+
+        // For the global file with everything inside
+        allData.push(data);
+
+        // Create the current CSV file for the TAILLE[j]
+        exportToCsv("CSV_" + arrayType + "_taille_" + TAILLE[j] + "_seuil_" + seuil, [data], fields);
 
         s1=0;
         s2=0;
@@ -104,3 +113,4 @@ for (var j = 0; j < TAILLE.length; j++) {
     }
   }
 }
+exportToCsv("CSV_" + arrayType + "_taille_ALL_seuil_" + seuil, allData, fields);
