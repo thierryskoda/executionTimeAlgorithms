@@ -104,7 +104,7 @@ for (var j = 0; j < TAILLE.length; j++) {
         allData.push(data);
 
         // Create the current CSV file for the TAILLE[j]
-        exportToCsv("CSV_" + arrayType + "_taille_" + TAILLE[j] + "_seuil_" + seuil, [data], fields);
+        exportToCsv("CSV_" + arrayType + "_taille_" + TAILLE[j] + "_seuil_" + seuil + ".csv", [data], fields);
 
         s1=0;
         s2=0;
@@ -113,4 +113,4 @@ for (var j = 0; j < TAILLE.length; j++) {
     }
   }
 }
-exportToCsv("CSV_" + arrayType + "_taille_ALL_seuil_" + seuil, allData, fields);
+exportToCsv("CSV_" + arrayType + "_taille_ALL_seuil_" + seuil + ".csv", allData, fields);
