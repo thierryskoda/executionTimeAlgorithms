@@ -15,7 +15,7 @@ case $key in
     shift
     ;;
     -p|--print|-t|--time)
-    OPTIONS="${OPTIONS}${1} "
+    OPTIONS="${OPTIONS}${1}"
     ;;
     *)
         echo "Argument inconnu: ${1}"
@@ -25,4 +25,4 @@ esac
 shift
 done
 
-echo python3 ./src/$ALGO.py $EX_PATH $OPTIONS
+node index.js $ALGO $EX_PATH $OPTIONS

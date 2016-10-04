@@ -9,36 +9,12 @@ var json2csv = require('json2csv');
 /*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
  /  Constants
  /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+const NUMBER_OF_EXAMPLAIRE = 30;
 const FIELDS = ['taille', 's1', 's2', 's3'];
-const seuil = 100;
+const MAX_SEUIL = 100;
 const ARRAY_TYPE = (process.argv.length > 2) ? process.argv[2] : null;
-const PATH = (process.argv.length > 3) ? [process.argv[3]] : "all";
-const OPTIONS = (process.argv.length > 4) ? [process.argv[4]] : null;
-var PRINT_TIME = false;
-var PRINT_NUMBERS = false;
-const TAILLE = (process.argv.length > 3) ? [process.argv[3]] : [1000, 5000, 10000, 50000, 100000];
-
-// ARRAY_TYPE bucket|bucketSeuil|merge|mergeSeuil
-if(!ARRAY_TYPE && ARRAY_TYPE !== 'merge' && ARRAY_TYPE != 'bucket' && ARRAY_TYPE != 'bucketSeuil' && ARRAY_TYPE != 'mergeSeuil') {
-  throw "No algo was specified. Use : 'tp.sh -a ALGO_GOES_HERE"
-}
-
-// PATH
-if(PATH === "all") {
-  console.log("NO Path specified");
-}
-
-// OPTIONS
-if(!OPTIONS) {
-  console.log("No options specified:")
-} else {
-  if(OPTIONS[0].includes('-t')) {
-    PRINT_TIME = true;
-  }
-  if(OPTIONS[0].includes('-p')) {
-    PRINT_NUMBERS = true;
-  }
-}
+const seuil = (process.argv.length > 3) ? [process.argv[3]][0] : null;
+const TAILLE = (process.argv.length > 4) ? [process.argv[4]] : [1000, 5000, 10000, 50000, 100000];
 
 /*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
  /  UTility functions
@@ -80,32 +56,17 @@ function getExecutionTime(arrayToSort, type) {
   arrayToSort = getArrayOfNumbers(arrayToSort);
 
   if(type === 'merge') {
-    MergeSort.seuil = 0;
+    MergeSort.seuil = seuil;
     var hrstart = process.hrtime();
     var sortedArray = MergeSort.sortV3(arrayToSort);
     var hrendMilli = process.hrtime(hrstart)[1]/1000000;
-  } else if(type === 'mergeSeuil') {
-    MergeSort.seuil = seuil;
-    var hrstart = process.hrtime();
-    var sortedArray = MergeSort.sort(arrayToSort);
-    var hrendMilli = process.hrtime(hrstart)[1]/1000000;
-  } else if(type === 'bucket') {
-    BucketSort.seuil = 0;
-    var hrstart = process.hrtime();
-    var sortedArray = BucketSort.sort(arrayToSort);
-    var hrendMilli = process.hrtime(hrstart)[1]/1000000;
-  } else if(type === 'bucketSort') {
+  } else {
     BucketSort.seuil = seuil;
     var hrstart = process.hrtime();
     var sortedArray = BucketSort.sort(arrayToSort);
     var hrendMilli = process.hrtime(hrstart)[1]/1000000;
+    // console.log("issorted?:", verifyIfSorted(sortedArray))
   }
-
-  if(PRINT_NUMBERS) {
-    console.log("-------------------------------------------------------------------------------------------");
-    console.log("The sorted array:", sortedArray.join(' '));
-  }
-
   return hrendMilli;
 }
 
@@ -113,18 +74,58 @@ function getExecutionTime(arrayToSort, type) {
 /*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
  /  The program
  /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
+
 var allData = [];
 
-for (var j = 0; j < PATH.length; j++) {
-  // Get the array from the file
-  var array = fs.readFileSync(PATH[j]).toString().split("\n");
-  array.pop();
+for (var j = 0; j < TAILLE.length; j++) {
+  var totalTempsExamplaire = 0;
+  var s1 = 0;
+  var s2 = 0;
+  var s3 = 0;
 
-  // Sort l'array selon seuil et l'algo
-  var totalTemps = getExecutionTime(array, ARRAY_TYPE);
+  // Loop sur nombre d'examplaire
+  for (var i = 0; i < NUMBER_OF_EXAMPLAIRE; i++) {
+    // Get the array from the file
+    var array = fs.readFileSync("./donnees/testset_" + TAILLE[j] + "_" + i + ".txt").toString().split("\n");
+    array.pop();
 
-  if(PRINT_TIME) {
-    console.log("-------------------------------------------------------------------------------------------");
-    console.log("Temps d'éxécution pour est: " + totalTemps + "ms");
+    totalTempsExamplaire += getExecutionTime(array, ARRAY_TYPE);
+
+    // Calcule de la totalTempsExamplaire pour la série
+    switch(i) {
+      case 9:
+        s1 = totalTempsExamplaire / 10;
+        console.log("Moyenne pour taille " + TAILLE[j] + " avec seuil de " + seuil + " pour la série 1 est: " + s1 + "ms")
+        totalTempsExamplaire = 0;
+        break;
+      case 19:
+        s2 = totalTempsExamplaire / 10;
+        console.log("Moyenne pour taille " + TAILLE[j] + " avec seuil de " + seuil + " pour la série 2 est: " + s2 + "ms")
+        totalTempsExamplaire = 0;
+        break;
+      case 29:
+        s3 = totalTempsExamplaire / 10;
+        console.log("Moyenne pour taille " + TAILLE[j] + " avec seuil de " + seuil + " pour la série 3 est: " + s3 + "ms")
+        totalTempsExamplaire = 0;
+
+        var data = {
+          taille: TAILLE[j],
+          s1: s1,
+          s2: s2,
+          s3: s3
+        };
+
+        // For the global file with everything inside
+        allData.push(data);
+
+        // Create the current CSV file for the TAILLE[j]
+        exportToCsv("CSV_" + ARRAY_TYPE + "_taille_" + TAILLE[j] + "_seuil_" + seuil + ".csv", [data], FIELDS);
+
+        s1=0;
+        s2=0;
+        s3=0;
+        break;
+    }
   }
 }
+exportToCsv("CSV_" + ARRAY_TYPE + "_taille_ALL_seuil_" + seuil + ".csv", allData, FIELDS);
