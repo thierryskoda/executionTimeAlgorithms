@@ -1,5 +1,5 @@
 var InsertionSort = require('./insertion.sort');
-exports.seuil = 0;
+exports.seuil = 1;
 
 /**
  * Sorts the array by breaking it down
