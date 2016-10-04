@@ -11,7 +11,7 @@ for algo in `echo algo1 algo2 algo3`; do
     t=""
     t=`timeout 180 ./tp.sh -a $algo -e ./ex/$ex -t`
     if [ "${t}" != "" ]; then
-      # Si on a des noms d'exemplaires de la forme testset_n_ne.txt, on peut 
+      # Si on a des noms d'exemplaires de la forme testset_n_ne.txt, on peut
       # extraire la taille avec sed (par exemple...)
       taille_ex=`echo $ex | sed 's/^testset_\([0-9]*\)_[0-9]*.txt/\1/'`
       echo $taille_ex,$t
