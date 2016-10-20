@@ -16,16 +16,16 @@ const PATH = (process.argv.length > 3) ? [process.argv[3]] : "all";
 const OPTIONS = (process.argv.length > 4) ? [process.argv[4]] : null;
 var PRINT_TIME = false;
 var PRINT_NUMBERS = false;
-const TAILLE = (process.argv.length > 3) ? [process.argv[3]] : [1000, 5000, 10000, 50000, 100000];
+// const TAILLE = (process.argv.length > 3) ? [process.argv[3]] : [1000, 5000, 10000, 50000, 100000];
 
 // ARRAY_TYPE bucket|bucketSeuil|merge|mergeSeuil
 if(!ARRAY_TYPE && ARRAY_TYPE !== 'merge' && ARRAY_TYPE != 'bucket' && ARRAY_TYPE != 'bucketSeuil' && ARRAY_TYPE != 'mergeSeuil') {
-  throw "No algo was specified. Use : 'tp.sh -a ALGO_GOES_HERE"
+  throw "No algo was specified. Use : 'tp.sh -a ALGO_GOES_HERE'  ALGO choices are merge, bucket, bucketSeuil, mergeSeuil";
 }
 
 // PATH
 if(PATH === "all") {
-  console.log("NO Path specified");
+  throw "No path specified. Use : 'tp.sh -a ALGO_GOES_HERE -e PATH_DATA"
 }
 
 // OPTIONS
