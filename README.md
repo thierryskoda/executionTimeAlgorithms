@@ -5,9 +5,6 @@
 ```
 2. npm install
 ```
-```
-3. npm start
-```
 
 ##Getting started with a bash script
 ```
